@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from 'react';
+import useFetch from 'use-http';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+const App = () => {
+  const [users, setUsers] = useState([]);
+  const { get, response, loading, error } = useFetch('https://jsonplaceholder.typicode.com', {}, []);
+
+  useEffect(async () => {
+    const users = await get('/users');
+    if (response.ok) {
+      setUsers(users);
+    }
+  }, []);
+
+  return(
+    <div>
+      {error && 'Error happing..'}
+      {loading && 'Request is loading..'}
+      {users.map(el => (
+        <li key={el.id}>{el.name}</li>
+      ))}
     </div>
   );
-}
 
+  // const { loading, error, data = [] } = useFetch('https://jsonplaceholder.typicode.com/users', {}, []);
+  // return(
+  //   <div>
+  //     {data.map(el => (
+  //       <li key={el.id}>{el.name}</li>
+  //     ))}
+  //   </div>
+  // );
+};
 export default App;
